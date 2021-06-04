@@ -142,3 +142,6 @@ C:\Users\akhils\source\repos\ParkyAPI\ParkyAPI\bin\Debug\netcoreapp3.1\Swashbuck
 C:\Users\akhils\source\repos\ParkyAPI\ParkyAPI\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.SwaggerUI.dll
 C:\Users\akhils\source\repos\ParkyAPI\ParkyAPI\bin\Debug\netcoreapp3.1\ParkyAPI.xml
 C:\Users\akhils\source\repos\ParkyAPI\ParkyAPI\obj\Debug\netcoreapp3.1\ParkyAPI.csprojAssemblyReference.cache
+C:\Users\akhils\source\repos\ParkyAPI\ParkyAPI\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\akhils\source\repos\ParkyAPI\ParkyAPI\obj\Debug\netcoreapp3.1\ParkyAPI.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\akhils\source\repos\ParkyAPI\ParkyAPI\obj\Debug\netcoreapp3.1\ParkyAPI.MvcApplicationPartsAssemblyInfo.cache

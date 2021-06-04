@@ -6,7 +6,7 @@ using ParkyAPI.Modals;
 
 namespace ParkyAPI.Repository.IRepository
 {
-    interface IUserRepository
+    public interface IUserRepository
     {
         bool IsUniqueUser(string UserName);
         Users Authenticate(string Username, string Password);
