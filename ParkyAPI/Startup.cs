@@ -21,6 +21,10 @@ using System.IO;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Options;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+
 namespace ParkyAPI
 {
     public class Startup
@@ -35,58 +39,71 @@ namespace ParkyAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors();
+            services.AddDbContext<ApplicationDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<INationalParkRepository, NationalParkRepository>();
             services.AddScoped<ITrailRepository, TrailRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddAutoMapper(typeof(ParkyMappings));
-            services.AddSwaggerGen(options => {
-                options.SwaggerDoc("ParkyOpenAPISpecNP",
-                    new Microsoft.OpenApi.Models.OpenApiInfo()
-                    {
-                        Title = "Parky API National Park",
-                        Version = "1",
-                        Description = "Udmey Parky API NP",
-                        Contact = new Microsoft.OpenApi.Models.OpenApiContact()
-                        {
-                            Email = "terin01@gmail.com",
-                            Name = "Terin Sebastin",
-                            Url = new Uri("https://www.google.com")
-                        },
-                        License = new Microsoft.OpenApi.Models.OpenApiLicense()
-                        {
-                            Name = "MIT Licence",
-                            Url = new Uri("https://en.wikipedia.org/wiki/MIT Licence")
-                        }
-                    }); ;
-                var xmlCommentFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var cmlCommentFullpath = Path.Combine(AppContext.BaseDirectory, xmlCommentFile);
-                options.IncludeXmlComments(cmlCommentFullpath);
-                });
-            services.AddSwaggerGen(options => {
-                options.SwaggerDoc("ParkyOpenAPISpecTrails",
-                    new Microsoft.OpenApi.Models.OpenApiInfo()
-                    {
-                        Title = "Parky API Trails",
-                        Version = "1",
-                        Description = "Udmey Parky API Trails",
-                        Contact = new Microsoft.OpenApi.Models.OpenApiContact()
-                        {
-                            Email = "terin01@gmail.com",
-                            Name = "Terin Sebastin",
-                            Url = new Uri("https://www.google.com")
-                        },
-                        License = new Microsoft.OpenApi.Models.OpenApiLicense()
-                        {
-                            Name = "MIT Licence",
-                            Url = new Uri("https://en.wikipedia.org/wiki/MIT Licence")
-                        }
-                    }); ;
-                var xmlCommentFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var cmlCommentFullpath = Path.Combine(AppContext.BaseDirectory, xmlCommentFile);
-                options.IncludeXmlComments(cmlCommentFullpath);
+
+            services.AddApiVersioning(options =>
+            {
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.DefaultApiVersion = new ApiVersion(1, 0);
+                options.ReportApiVersions = true;
             });
-            services.AddDbContext<ApplicationDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddControllers();
+            services.AddVersionedApiExplorer(options => options.GroupNameFormat = "'v'VVV");
+            services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOption>();
+            services.AddSwaggerGen();
+            //services.AddSwaggerGen(options => {
+            //    options.SwaggerDoc("ParkyOpenAPISpecNP",
+            //        new Microsoft.OpenApi.Models.OpenApiInfo()
+            //        {
+            //            Title = "Parky API National Park",
+            //            Version = "1",
+            //            Description = "Udmey Parky API NP",
+            //            Contact = new Microsoft.OpenApi.Models.OpenApiContact()
+            //            {
+            //                Email = "terin01@gmail.com",
+            //                Name = "Terin Sebastin",
+            //                Url = new Uri("https://www.google.com")
+            //            },
+            //            License = new Microsoft.OpenApi.Models.OpenApiLicense()
+            //            {
+            //                Name = "MIT Licence",
+            //                Url = new Uri("https://en.wikipedia.org/wiki/MIT Licence")
+            //            }
+            //        }); ;
+            //    var xmlCommentFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            //    var cmlCommentFullpath = Path.Combine(AppContext.BaseDirectory, xmlCommentFile);
+            //    options.IncludeXmlComments(cmlCommentFullpath);
+            //    });
+            //services.AddSwaggerGen(options => {
+            //    options.SwaggerDoc("ParkyOpenAPISpecTrails",
+            //        new Microsoft.OpenApi.Models.OpenApiInfo()
+            //        {
+            //            Title = "Parky API Trails",
+            //            Version = "1",
+            //            Description = "Udmey Parky API Trails",
+            //            Contact = new Microsoft.OpenApi.Models.OpenApiContact()
+            //            {
+            //                Email = "terin01@gmail.com",
+            //                Name = "Terin Sebastin",
+            //                Url = new Uri("https://www.google.com")
+            //            },
+            //            License = new Microsoft.OpenApi.Models.OpenApiLicense()
+            //            {
+            //                Name = "MIT Licence",
+            //                Url = new Uri("https://en.wikipedia.org/wiki/MIT Licence")
+            //            }
+            //        }); ;
+            //    var xmlCommentFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            //    var cmlCommentFullpath = Path.Combine(AppContext.BaseDirectory, xmlCommentFile);
+            //    options.IncludeXmlComments(cmlCommentFullpath);
+            //});
+            
+            
+           
 
             //GetHashCode For JWT Tocken ----- START
             var appSettingsSection = Configuration.GetSection("AppSettings");
@@ -112,10 +129,12 @@ namespace ParkyAPI
                     };
                 });
             //GetHashCode For JWT Tocken ----- END
+
+            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApiVersionDescriptionProvider provider)
         {
             if (env.IsDevelopment())
             {
@@ -126,10 +145,18 @@ namespace ParkyAPI
             app.UseSwagger();
             app.UseSwaggerUI(options =>
             {
-                options.SwaggerEndpoint("/swagger/ParkyOpenAPISpecNP/swagger.json", "Parky API National Park");
-                options.SwaggerEndpoint("/swagger/ParkyOpenAPISpecTrails/swagger.json", "Parky API Trails");
+                foreach (var desc in provider.ApiVersionDescriptions)
+                    options.SwaggerEndpoint($"/swagger/{desc.GroupName}/Swagger.json",
+                        desc.GroupName.ToUpperInvariant());
                 options.RoutePrefix = "";
             });
+            //app.UseSwaggerUI(options =>
+            //{
+            //    options.SwaggerEndpoint("/swagger/ParkyOpenAPISpecNP/swagger.json", "Parky API National Park");
+            //    options.SwaggerEndpoint("/swagger/ParkyOpenAPISpecTrails/swagger.json", "Parky API Trails");
+            //    options.RoutePrefix = "";
+            //});
+
             app.UseRouting();
 
             app.UseCors(x => x
@@ -144,6 +171,7 @@ namespace ParkyAPI
             {
                 endpoints.MapControllers();
             });
+            
         }
     }
 }

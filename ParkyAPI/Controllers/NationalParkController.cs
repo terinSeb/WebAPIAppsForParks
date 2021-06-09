@@ -12,9 +12,10 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ParkyAPI.Controllers
 {
-    [Route("api/[controller]")]    
+    [Route("api/v{version:apiVersion}/nationalparks")]
+    //[Route("api/[controller]")]
     [ApiController]
-    [ApiExplorerSettings(GroupName = "ParkyOpenAPISpecNP")]
+    //[ApiExplorerSettings(GroupName = "ParkyOpenAPISpecNP")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public class NationalParkController : ControllerBase
     {

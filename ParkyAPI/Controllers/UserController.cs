@@ -12,7 +12,8 @@ using ParkyAPI.Repository.IRepository;
 namespace ParkyAPI.Controllers
 {
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/Users")]
+    //[Route("api/[controller]")]
     [ApiController]
     public class UserController : Controller
     {
