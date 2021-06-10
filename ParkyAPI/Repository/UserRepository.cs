@@ -24,24 +24,52 @@ namespace ParkyAPI.Repository
         }
         public Users Authenticate(string Username, string Password)
         {
+            //var user = _db.users.SingleOrDefault(x => x.UserName == Username && x.Password == Password);
+            //if(user == null)
+            //{
+            //    return null;
+            //}
+            ////If User was Found Generate JWT Tocken
+            //var tokenHandler = new JwtSecurityTokenHandler();
+            //var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+            //var tokenDescriptor = new SecurityTokenDescriptor
+            //{
+            //    Subject = new ClaimsIdentity(new Claim[]
+            //    {
+            //        new Claim(ClaimTypes.Name, user.Id.ToString())
+            //    }),
+            //    Expires = DateTime.UtcNow.AddDays(7),
+            //    SigningCredentials = new SigningCredentials
+            //    (new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            //};
+            //var token = tokenHandler.CreateToken(tokenDescriptor);
+            //user.Token = tokenHandler.WriteToken(token);
+            //user.Password = "";
+            //return user;
+
+
             var user = _db.users.SingleOrDefault(x => x.UserName == Username && x.Password == Password);
-            if(user == null)
+
+            //user not found
+            if (user == null)
             {
                 return null;
             }
-            //If User was Found Generate JWT Tocken
+
+            //if user was found generate JWT Token
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.Name, user.Id.ToString())
+                Subject = new ClaimsIdentity(new Claim[] {
+                    new Claim(ClaimTypes.Name, user.Id.ToString()),
+                    new Claim(ClaimTypes.Role,user.Role)
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials
-                (new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                                (new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
+
             var token = tokenHandler.CreateToken(tokenDescriptor);
             user.Token = tokenHandler.WriteToken(token);
             user.Password = "";
@@ -50,12 +78,23 @@ namespace ParkyAPI.Repository
 
         public bool IsUniqueUser(string UserName)
         {
-            throw new NotImplementedException();
+            var user = _db.users.SingleOrDefault(x => x.UserName == UserName);
+            if (user == null)
+                return true;
+            return false;
         }
 
         public Users Register(string Username, string Password)
         {
-            throw new NotImplementedException();
+            var userObj = new Users()
+            {
+                UserName = Username,
+                Password = Password
+            }
+            _db.users.Add(userObj);
+            _db.SaveChanges();
+            userObj.Password = "";
+            return userObj;
         }
     }
 }

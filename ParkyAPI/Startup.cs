@@ -40,11 +40,14 @@ namespace ParkyAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors();
-            services.AddDbContext<ApplicationDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<ApplicationDBContext>
+                (options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddScoped<INationalParkRepository, NationalParkRepository>();
             services.AddScoped<ITrailRepository, TrailRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddAutoMapper(typeof(ParkyMappings));
+
 
             services.AddApiVersioning(options =>
             {
@@ -55,81 +58,75 @@ namespace ParkyAPI
             services.AddVersionedApiExplorer(options => options.GroupNameFormat = "'v'VVV");
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOption>();
             services.AddSwaggerGen();
-            //services.AddSwaggerGen(options => {
-            //    options.SwaggerDoc("ParkyOpenAPISpecNP",
-            //        new Microsoft.OpenApi.Models.OpenApiInfo()
-            //        {
-            //            Title = "Parky API National Park",
-            //            Version = "1",
-            //            Description = "Udmey Parky API NP",
-            //            Contact = new Microsoft.OpenApi.Models.OpenApiContact()
-            //            {
-            //                Email = "terin01@gmail.com",
-            //                Name = "Terin Sebastin",
-            //                Url = new Uri("https://www.google.com")
-            //            },
-            //            License = new Microsoft.OpenApi.Models.OpenApiLicense()
-            //            {
-            //                Name = "MIT Licence",
-            //                Url = new Uri("https://en.wikipedia.org/wiki/MIT Licence")
-            //            }
-            //        }); ;
-            //    var xmlCommentFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-            //    var cmlCommentFullpath = Path.Combine(AppContext.BaseDirectory, xmlCommentFile);
-            //    options.IncludeXmlComments(cmlCommentFullpath);
-            //    });
-            //services.AddSwaggerGen(options => {
-            //    options.SwaggerDoc("ParkyOpenAPISpecTrails",
-            //        new Microsoft.OpenApi.Models.OpenApiInfo()
-            //        {
-            //            Title = "Parky API Trails",
-            //            Version = "1",
-            //            Description = "Udmey Parky API Trails",
-            //            Contact = new Microsoft.OpenApi.Models.OpenApiContact()
-            //            {
-            //                Email = "terin01@gmail.com",
-            //                Name = "Terin Sebastin",
-            //                Url = new Uri("https://www.google.com")
-            //            },
-            //            License = new Microsoft.OpenApi.Models.OpenApiLicense()
-            //            {
-            //                Name = "MIT Licence",
-            //                Url = new Uri("https://en.wikipedia.org/wiki/MIT Licence")
-            //            }
-            //        }); ;
-            //    var xmlCommentFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-            //    var cmlCommentFullpath = Path.Combine(AppContext.BaseDirectory, xmlCommentFile);
-            //    options.IncludeXmlComments(cmlCommentFullpath);
-            //});
-            
-            
-           
 
-            //GetHashCode For JWT Tocken ----- START
+
+
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
             var appSettings = appSettingsSection.Get<AppSettings>();
             var key = Encoding.ASCII.GetBytes(appSettings.Secret);
-
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-                .AddJwtBearer(x =>
+            .AddJwtBearer(x => {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
                 {
-                    x.RequireHttpsMetadata = false;
-                    x.SaveToken = true;
-                    x.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(key),
-                        ValidateIssuer = false,
-                        ValidateAudience = false
-                    };
-                });
-            //GetHashCode For JWT Tocken ----- END
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
 
+
+            //services.AddSwaggerGen(options=> {
+            //    options.SwaggerDoc("ParkyOpenAPISpec",
+            //        new Microsoft.OpenApi.Models.OpenApiInfo()
+            //        {
+            //            Title = "Parky API",
+            //            Version = "1",
+            //            Description="Udemy Parky API NP",
+            //            Contact = new Microsoft.OpenApi.Models.OpenApiContact()
+            //            {
+            //                Email = "bhrugen.udemy@gmail.com",
+            //                Name = "Bhrugen Patel",
+            //                Url = new Uri("https://wwww.bhrugen.com")
+            //            },
+            //            License = new Microsoft.OpenApi.Models.OpenApiLicense()
+            //            {
+            //                Name = "MIT License",
+            //                Url = new Uri("https://en.wikipedia.org/wiki/MIT_License")
+            //            }
+
+            //        });
+
+            //    //options.SwaggerDoc("ParkyOpenAPISpecTrails",
+            //    //   new Microsoft.OpenApi.Models.OpenApiInfo()
+            //    //   {
+            //    //       Title = "Parky API Trails",
+            //    //       Version = "1",
+            //    //       Description = "Udemy Parky API Trails",
+            //    //       Contact = new Microsoft.OpenApi.Models.OpenApiContact()
+            //    //       {
+            //    //           Email = "bhrugen.udemy@gmail.com",
+            //    //           Name = "Bhrugen Patel",
+            //    //           Url = new Uri("https://wwww.bhrugen.com")
+            //    //       },
+            //    //       License = new Microsoft.OpenApi.Models.OpenApiLicense()
+            //    //       {
+            //    //           Name = "MIT License",
+            //    //           Url = new Uri("https://en.wikipedia.org/wiki/MIT_License")
+            //    //       }
+
+            //    //   });
+            //    var xmlCommentFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            //    var cmlCommentsFullPath = Path.Combine(AppContext.BaseDirectory, xmlCommentFile);
+            //    options.IncludeXmlComments(cmlCommentsFullPath);
+            //});
             services.AddControllers();
         }
 
@@ -143,27 +140,23 @@ namespace ParkyAPI
 
             app.UseHttpsRedirection();
             app.UseSwagger();
-            app.UseSwaggerUI(options =>
-            {
+            app.UseSwaggerUI(options => {
                 foreach (var desc in provider.ApiVersionDescriptions)
-                    options.SwaggerEndpoint($"/swagger/{desc.GroupName}/Swagger.json",
+                    options.SwaggerEndpoint($"/swagger/{desc.GroupName}/swagger.json",
                         desc.GroupName.ToUpperInvariant());
                 options.RoutePrefix = "";
             });
-            //app.UseSwaggerUI(options =>
-            //{
-            //    options.SwaggerEndpoint("/swagger/ParkyOpenAPISpecNP/swagger.json", "Parky API National Park");
-            //    options.SwaggerEndpoint("/swagger/ParkyOpenAPISpecTrails/swagger.json", "Parky API Trails");
+
+            //app.UseSwaggerUI(options=> {
+            //    options.SwaggerEndpoint("/swagger/ParkyOpenAPISpec/swagger.json", "Parky API");
+            //    //options.SwaggerEndpoint("/swagger/ParkyOpenAPISpecTrails/swagger.json", "Parky API Trails");
             //    options.RoutePrefix = "";
             //});
-
             app.UseRouting();
-
             app.UseCors(x => x
-            .AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader());
-
+              .AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader());
             app.UseAuthentication();
             app.UseAuthorization();
 
@@ -171,7 +164,6 @@ namespace ParkyAPI
             {
                 endpoints.MapControllers();
             });
-            
         }
     }
 }
