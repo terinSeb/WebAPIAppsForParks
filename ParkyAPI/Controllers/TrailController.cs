@@ -8,6 +8,8 @@ using ParkyAPI.Repository.IRepository;
 using AutoMapper;
 using ParkyAPI.Modals.Dtos;
 using ParkyAPI.Modals;
+using Microsoft.AspNetCore.Authorization;
+
 namespace ParkyAPI.Controllers
 {
     //[Route("api/Trails")]
@@ -47,6 +49,7 @@ namespace ParkyAPI.Controllers
         [ProducesResponseType(200, Type = typeof(TrailDto))]
         [ProducesResponseType(404)]
         [ProducesDefaultResponseType]
+        [Authorize(Roles ="Admin")]
         public IActionResult GetTrail(int TrailId)
         {
             var Obj = _trailRepository.GetTrail(TrailId);

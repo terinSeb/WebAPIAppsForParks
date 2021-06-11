@@ -89,8 +89,9 @@ namespace ParkyAPI.Repository
             var userObj = new Users()
             {
                 UserName = Username,
-                Password = Password
-            }
+                Password = Password,
+                Role = "Admin"
+            };
             _db.users.Add(userObj);
             _db.SaveChanges();
             userObj.Password = "";
