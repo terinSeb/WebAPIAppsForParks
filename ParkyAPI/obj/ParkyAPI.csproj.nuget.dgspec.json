@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\akhils\\source\\repos\\ParkyAPI\\ParkyAPI\\ParkyAPI.csproj": {}
+    "D:\\ParkyAPI\\WebAPIAppsForParks\\ParkyAPI\\ParkyAPI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\akhils\\source\\repos\\ParkyAPI\\ParkyAPI\\ParkyAPI.csproj": {
+    "D:\\ParkyAPI\\WebAPIAppsForParks\\ParkyAPI\\ParkyAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\akhils\\source\\repos\\ParkyAPI\\ParkyAPI\\ParkyAPI.csproj",
+        "projectUniqueName": "D:\\ParkyAPI\\WebAPIAppsForParks\\ParkyAPI\\ParkyAPI.csproj",
         "projectName": "ParkyAPI",
-        "projectPath": "C:\\Users\\akhils\\source\\repos\\ParkyAPI\\ParkyAPI\\ParkyAPI.csproj",
+        "projectPath": "D:\\ParkyAPI\\WebAPIAppsForParks\\ParkyAPI\\ParkyAPI.csproj",
         "packagesPath": "C:\\Users\\akhils\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\akhils\\source\\repos\\ParkyAPI\\ParkyAPI\\obj\\",
+        "outputPath": "D:\\ParkyAPI\\WebAPIAppsForParks\\ParkyAPI\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
